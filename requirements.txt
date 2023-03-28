@@ -1,3 +1,4 @@
 annoy
 transformers
 torch
+neo4j
