@@ -2,3 +2,7 @@ annoy
 transformers
 torch
 neo4j
+openai
+python-dotenv
+spacy-experimental~=0.6.2
+spacy
