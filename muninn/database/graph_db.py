@@ -171,7 +171,7 @@ class GraphDB:
             WITH r
             UNWIND $fact_ids as fact_id
             MATCH (f:Fact) WHERE id(f) = fact_id
-            CREATE (r)-[:CONTAINS]->(r)
+            CREATE (r)-[:CONTAINS]->(f)
         '''
         parameters = {'timestamp': timestamp, 'fact_ids': fact_ids}
 
