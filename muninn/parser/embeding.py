@@ -24,7 +24,7 @@ class Embedding:
             api_key: Optional[str] = None,
             org_key: Optional[str] = None,
     ) -> None:
-        """"""
+        """Set up client and parse API keys"""
         self.model = model or DEFAULT_MODEL
         self.api_key = api_key or os.environ.get("OPENAI_API_KEY")
         self.org_key = org_key or os.environ.get("OPEN_API_ORG_KEY")

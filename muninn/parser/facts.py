@@ -5,7 +5,9 @@ from dotenv import load_dotenv
 
 load_dotenv(override=True)
 openai.api_key = os.getenv("OPENAI_API_KEY")
-
+TURBO_35 = "gpt-3.5-turbo"
+CURIE = "text-curie-001"
+DEFAULT = TURBO_35
 FACT_EXTRACTOR_PROMPT = (
     "You are text analyzer. Your task is a table listing the only important facts from Input. Split each complicated "
     "fact into multiple elemental facts."
@@ -22,15 +24,16 @@ FACT_EXTRACTOR_PROMPT = (
     "\n\nExample 2 (no facts):\n"
     "-Input: \nToday I had a nice day.\n"
     "-Output:"
-    "\n\nInput: {text}"
+    "\n\nInput: {text}\n"
     "Output:\n"
 )
+print(FACT_EXTRACTOR_PROMPT)
 target_text = "Valji> My abilities are: Shield Bash: I can use your shield to strike your enemy and stun them for a short period of time.Precise Strike: I have the ability to aim your attacks more accurately, giving you a better chance of hitting your target.Surprising strength: I can double my damage to enemies who have never fought me before. Endurance: I have increased stamina and I can endure physical challenges for longer periods of time."
 
 task = FACT_EXTRACTOR_PROMPT.format(text=target_text)
 
-response = openai.Completion.create(
-    model="text-davinci-002",
+response = openai.ChatCompletion.create(
+    model=DEFAULT,
     prompt=task,
     temperature=0,
     max_tokens=180,
