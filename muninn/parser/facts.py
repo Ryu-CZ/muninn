@@ -28,7 +28,11 @@ FACT_EXTRACTOR_PROMPT = (
     "Output:\n"
 )
 print(FACT_EXTRACTOR_PROMPT)
-target_text = "Valji> My abilities are: Shield Bash: I can use your shield to strike your enemy and stun them for a short period of time.Precise Strike: I have the ability to aim your attacks more accurately, giving you a better chance of hitting your target.Surprising strength: I can double my damage to enemies who have never fought me before. Endurance: I have increased stamina and I can endure physical challenges for longer periods of time."
+target_text = "Valji> My abilities are: Shield Bash: I can use your shield to strike your enemy and stun them for a " \
+              "short period of time.Precise Strike: I have the ability to aim your attacks more accurately, " \
+              "giving you a better chance of hitting your target.Surprising strength: I can double my damage " \
+              "to enemies who have never fought me before. Endurance: I have increased stamina and I can " \
+              "endure physical challenges for longer periods of time."
 
 task = FACT_EXTRACTOR_PROMPT.format(text=target_text)
 

@@ -188,4 +188,3 @@ class GraphDB:
         '''
         result = self._execute_query(query, parameters, write=True)
         return result[0]['record_id']
-

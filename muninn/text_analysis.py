@@ -1,9 +1,10 @@
-from transformers import AutoTokenizer, AutoModel
 import torch
+from transformers import AutoTokenizer, AutoModel
 
 model_name = "openai/ada"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModel.from_pretrained(model_name)
+
 
 def get_embedding(text: str):
     inputs = tokenizer(text, return_tensors="pt")
