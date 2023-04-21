@@ -5,7 +5,7 @@ from typing import Optional, Iterable, List, TypeVar
 import chromadb
 import chromadb.api
 import chromadb.utils.embedding_functions
-from chromadb.api.types import GetResult, Include, IDs, ID, Embedding, Document, Metadata, QueryResult
+from chromadb.api.types import GetResult, Include, ID, Embedding, Document, Metadata, QueryResult
 from chromadb.config import Settings
 
 __all__ = (
@@ -23,9 +23,10 @@ DOCS_ONLY: Include = ["documents", ]
 
 @dataclass
 class MatchedResult:
-    ids: Optional[IDs]
+    ids: Optional[List[ID]]
     embeddings: Optional[List[Embedding]]
     documents: Optional[List[Document]]
+    # noinspection SpellCheckingInspection
     metadatas: Optional[List[Metadata]]
     distances: Optional[List[float]]
 
@@ -84,14 +85,14 @@ class VectorStorage:
         self.client = chromadb.Client(setting)
         self.collection = self.client.get_or_create_collection(name=collection_name)
 
-    def get(self, doc_ids: str | list[str]) -> MatchedResult:
+    def get(self, doc_id: ID) -> MatchedResult:
         """
-        Find document(s) by id(s).
+        Find document by id.
 
-        :param doc_ids: document ids
+        :param doc_id: document ids
         :return: matched documents
         """
-        return first(self.collection.get(ids=doc_ids))
+        return first(self.collection.get(ids=doc_id))
 
     def query(self, embedding: list[float], n_results: int = 17) -> Iterable[Document]:
         """
@@ -110,7 +111,7 @@ class VectorStorage:
         )
         return result.documents
 
-    def add(self, embedding: Embedding, document: str) -> ID:
+    def add(self, embedding: Embedding, document: Document) -> ID:
         """
         Insert embedded document. Skip if it is duplicate.
 
