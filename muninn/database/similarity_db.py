@@ -31,12 +31,24 @@ class MatchedResult:
 
 
 def first_or_none(array: Optional[List[_T]]) -> Optional[_T]:
+    """
+    Get first element of array or none
+
+    :param array: optional array
+    :return: None or first element
+    """
     if not array:
         return None
     return array[0]
 
 
-def to_result(query_result: QueryResult | GetResult) -> MatchedResult:
+def first(query_result: QueryResult | GetResult) -> MatchedResult:
+    """
+    Get first result from multiset
+
+    :param query_result: original result of query with many sets
+    :return: get first set from multiset
+    """
     return MatchedResult(
         *(first_or_none(query_result.get(key)) for key in QUERY_KEYS)
     )
@@ -79,7 +91,7 @@ class VectorStorage:
         :param doc_ids: document ids
         :return: matched documents
         """
-        return to_result(self.collection.get(ids=doc_ids))
+        return first(self.collection.get(ids=doc_ids))
 
     def query(self, embedding: list[float], n_results: int = 17) -> Iterable[Document]:
         """
@@ -89,7 +101,7 @@ class VectorStorage:
         :param n_results: max limit returned doc number
         :return: documents
         """
-        result = to_result(
+        result = first(
             self.collection.query(
                 query_embeddings=embedding,
                 n_results=n_results,
@@ -110,7 +122,7 @@ class VectorStorage:
         # detect duplicate
         # noinspection PyBroadException
         try:
-            suspect_duplicates = to_result(
+            suspect_duplicates = first(
                 self.collection.query(
                     query_embeddings=embedding,
                     where={"doc_hash": doc_hash},
