@@ -18,6 +18,12 @@ class Episodic:
             embedder: language.Embedding,
             storage: database.VectorStorage,
     ) -> None:
+        """
+        Construct episodic memory
+
+        :param embedder: categorize text to vector space
+        :param storage: vector database
+        """
         self.embedder = embedder
         self.storage = storage
 
