@@ -7,3 +7,4 @@ python-dotenv
 spacy-experimental~=0.6.2
 spacy
 chromadb
+sqlalchemy
