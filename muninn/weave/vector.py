@@ -20,9 +20,15 @@ class Similar(Record):
     distance: float
 
 
+# noinspection SpellCheckingInspection
 def parse_similar(result: chromadb.QueryResult) -> tuple[Similar, ...]:
-    """Parse query result to use object representation rather than bundle of multi vectors"""
-    # noinspection SpellCheckingInspection
+    """
+    Parse query result to use object representation rather than bundle of multi vectors.
+
+    :param result: {"ids":["1", ], "embeddings"[[1, 2.2, ...], ], "metadatas":[], "distances"[0.22, ]}
+    :return: parsed Similar Records
+    """
+
     return tuple(
         Similar(*rec)
         for rec in zip(
