@@ -28,7 +28,6 @@ def parse_similar(result: chromadb.QueryResult) -> tuple[Similar, ...]:
     :param result: {"ids":["1", ], "embeddings"[[1, 2.2, ...], ], "metadatas":[], "distances"[0.22, ]}
     :return: parsed Similar Records
     """
-
     return tuple(
         Similar(*rec)
         for rec in zip(
@@ -106,7 +105,7 @@ class ContextStorage:
         :return: similar records
         """
         result = self.collection.query(
-            query_embeddings=[self._embedder.encode(content, normalize_embeddings=True).tolist()],
+            query_embeddings=self._embedder.encode(content, normalize_embeddings=True).tolist(),
             include=self.SIM_INCLUDE,
             n_results=n_results,
             where=where,
