@@ -1,7 +1,9 @@
 import uuid
-
+from itertools import islice
+from PIL import Image
 import streamlit as st
 import streamlit.components.v1 as components
+from pathlib import Path
 
 
 def mermaid(code: str, height: int = 250, scrolling: bool = True) -> None:
@@ -30,21 +32,43 @@ class UI:
 
     # define default memory state here
     DEFAULT_STATE = dict(
-            chat=[],
-            user="user",
-            title="AI chat",
-        )
+        conversations=[],
+        user="user",
+        active_conversation=[],
+        favicon=None,
+    )
 
-    def __init__(self):
+    def __init__(
+            self,
+            batch_size: int = 512,
+            title: str = "Muninn",
+            favicon: str = "./muninn/images/muninn.png"
+    ) -> None:
+        self.batch_size = max(1, batch_size or 512)
+        self.favicon = favicon
+        self.title = title
         self.set_state()
-        st.title(st.session_state["title"])
-        st.sidebar.title("History")
-        self.prompt = st.chat_input(placeholder="Send message", key="prompt", on_submit=self.prompt_call)
+        self.show_active_conversation()
+        self.prompt = st.session_state.get("prompt")
 
-    def prompt_call(self, *args, **kwargs):
+    def show(self):
+        st.set_page_config(
+            page_title=self.title,
+            layout="centered",
+            initial_sidebar_state="expanded",
+            page_icon=st.session_state["favicon"],
+        )
+        st.sidebar.write("### History")
+        self.show_active_conversation()
+        self.prompt = st.chat_input("Send message", key="prompt", on_submit=self.prompt_callback)
+
+    def prompt_callback(self, *args, **kwargs):
+        self.prompt = st.session_state.get("prompt")
         print(f"prompt_call - {self.prompt=} {args=} {kwargs=} st.session_state={st.session_state}")
 
-    def set_state(self) -> None:
+    def set_state(
+            self,
+    ) -> None:
         """Fill `streamlit.session_state` with default dict if there is None"""
         if st.session_state.get("has_defaults"):
             return
@@ -52,17 +76,36 @@ class UI:
         for k, v in self.DEFAULT_STATE.items():
             if k not in st.session_state:
                 st.session_state[k] = v
+
+        if self.favicon and Path(self.favicon).exists():
+            st.session_state["favicon"] = Image.open(Path(self.favicon), mode="r")
         st.session_state["has_defaults"] = True
 
-    def add_message(self, text: str, is_user: bool = False):
-        with st.chat_message("ai" if is_user else st.session_state["user"]):
+    def show_active_conversation(self) -> None:
+        """If there is active conversation, shot chat history in main chat window"""
+        if not st.session_state["active_conversation"]:
+            return
+        for message in islice(st.session_state["active_conversation"], 512):
+            self.show_message(message["content"], message["type"])
+
+    def show_message(self, text: str, type_: str = None) -> None:
+        """Shortcut to show message as system or from one of chat participants"""
+        if type_ is None:
             st.write(text)
+            return
+        st.chat_message(type_).write(text)
 
 
 def test_main():
     ui = UI()
-    if ui.prompt:
-        print(f"{ui.prompt=}")
+    ui.show()
+    ui.show_message("""
+    ### Markdown - Sub Sub Topic
+    Here is paragraph for example. 
+    ```py
+    import os
+    ```
+    """)
 
 
 if __name__ == "__main__":
