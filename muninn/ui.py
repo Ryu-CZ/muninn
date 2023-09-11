@@ -4,6 +4,7 @@ from PIL import Image
 import streamlit as st
 import streamlit.components.v1 as components
 from pathlib import Path
+import warnings
 
 
 def mermaid(code: str, height: int = 250, scrolling: bool = True) -> None:
@@ -29,6 +30,7 @@ class UI:
     Wrap around streamlit UI.
     Remember streamlit acts as singleton so there should be no need to create more than 1 instance of UI.
     """
+    HIGHLANDER: bool = False  # there should be only one instance
 
     # define default memory state here
     DEFAULT_STATE = dict(
@@ -44,6 +46,9 @@ class UI:
             title: str = "Muninn",
             favicon: str = "./muninn/images/muninn.png"
     ) -> None:
+        if type(self).HIGHLANDER:
+            warnings.warn("There should be only one UI instance", RuntimeWarning)
+        type(self).HIGHLANDER = True
         self.batch_size = max(1, batch_size or 512)
         self.favicon = favicon
         self.title = title
